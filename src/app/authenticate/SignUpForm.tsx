@@ -23,32 +23,40 @@ import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const signInSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-});
-
-const SignInForm = () => {
+export const signUpSchema = z
+  .object({
+    name: z.string().min(5),
+    email: z.string().email(),
+    password: z.string().min(8),
+    confirmPassword: z.string().min(8),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords dont match",
+    path: ["confirmPassword"],
+  });
+const SignUpForm = () => {
   // 1. Define your form.
-  const form = useForm<z.infer<typeof signInSchema>>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<z.infer<typeof signUpSchema>>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof signInSchema>) {
+  function onSubmit(values: z.infer<typeof signUpSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
   }
   return (
-    <Card>
+    <Card className="min-w-[500px]">
       <CardHeader>
-        <CardTitle> Welcome Back! </CardTitle>
-        <CardDescription>Sign in to your account to continue.</CardDescription>
+        <CardTitle> Begin ur Journey </CardTitle>
+        <CardDescription>Create your account to continue.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
         <Form {...form}>
@@ -75,6 +83,19 @@ const SignInForm = () => {
             />
             <FormField
               control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your name..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="password"
               render={({ field }) => (
                 <FormItem>
@@ -90,8 +111,25 @@ const SignInForm = () => {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Confirm your password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <Button typeof="submit" className="self-start">
-              Login
+              Sign Up
             </Button>
           </form>
         </Form>
@@ -99,5 +137,5 @@ const SignInForm = () => {
     </Card>
   );
 };
-// 3950
-export default SignInForm;
+
+export default SignUpForm;
