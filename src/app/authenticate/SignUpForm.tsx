@@ -23,6 +23,8 @@ import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signUp } from "./auth.action";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export const signUpSchema = z
   .object({
@@ -36,6 +38,7 @@ export const signUpSchema = z
     path: ["confirmPassword"],
   });
 const SignUpForm = () => {
+  const router = useRouter();
   // 1. Define your form.
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
@@ -52,7 +55,13 @@ const SignUpForm = () => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
 
-    await signUp(values);
+    const res = await signUp(values);
+    if (res.success) {
+      toast.success("Account Created Successfully");
+      router.push("/dashboard");
+    } else {
+      toast.error(res.error);
+    }
     console.log(values);
   }
   return (
