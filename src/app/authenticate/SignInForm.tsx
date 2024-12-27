@@ -22,13 +22,17 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { signIn } from "./auth.action";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
-const signInSchema = z.object({
+export const signInSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
 });
 
 const SignInForm = () => {
+  const router = useRouter();
   // 1. Define your form.
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -39,9 +43,17 @@ const SignInForm = () => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof signInSchema>) {
+  async function onSubmit(values: z.infer<typeof signInSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+
+    const res = await signIn(values);
+    if (res.success) {
+      toast.success("Login successful");
+      router.push("/dashboard");
+    } else {
+      toast.error(res.error);
+    }
     console.log(values);
   }
   return (

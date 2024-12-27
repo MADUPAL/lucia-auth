@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { Argon2id } from 'oslo/password';
 import { lucia } from "@/lib/lucia";
 import { cookies } from "next/headers";
+import { signInSchema } from "./SignInForm";
 
 //values : passing in from form
 export const signUp = async (values: z.infer<typeof signUpSchema>) => {
@@ -44,7 +45,35 @@ export const signUp = async (values: z.infer<typeof signUpSchema>) => {
     cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
     return {success: true}
   } catch (error) {
-    return {error: 'Something went wrong', success: false}
-    
+    return {error: 'Something went wrong', success: false}   
   }
+}
+
+/* 1. get userId
+   2. create session/cookie for user
+   3. ask nextjs to set the cookie on the browser*/
+export const signIn = async (values: z.infer<typeof signInSchema>) => {
+  console.log('im running in the server signing in', values)
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: values.email
+    }
+  })
+
+  if (!user || !user.hashedPassword) {
+    return {success: false, error: "Invalid Credentials"}
+  }
+
+  const passwordMatch = await new Argon2id().verify(user.hashedPassword, values.password)
+
+  if (!passwordMatch) {
+    return {success: false, error: "Invalid Credentials"}
+  }
+
+  const session = await lucia.createSession(user.id, {})
+  const sessionCookie = await lucia.createSessionCookie(session.id)
+  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
+
+  return {success: true }
 }
