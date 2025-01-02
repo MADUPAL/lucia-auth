@@ -1,6 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-// 4700
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,15 +10,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//hashed one is optional bc of the oauth users
 model User {
-  id             String  @id @default(cuid())
-  email          String  @unique
+  id             String    @id @default(cuid())
+  email          String    @unique
   name           String
   role           String?
   hashedPassword String?
-
-  Session Session[]
+  Session        Session[]
 }
 
 model Session {

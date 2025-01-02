@@ -6,20 +6,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import React from "react";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import React from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-
-import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signIn } from "./auth.action";
@@ -33,7 +31,6 @@ export const signInSchema = z.object({
 
 const SignInForm = () => {
   const router = useRouter();
-  // 1. Define your form.
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -42,11 +39,7 @@ const SignInForm = () => {
     },
   });
 
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof signInSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-
     const res = await signIn(values);
     if (res.success) {
       toast.success("Login successful");
@@ -54,12 +47,12 @@ const SignInForm = () => {
     } else {
       toast.error(res.error);
     }
-    console.log(values);
+    // console.log(values);
   }
   return (
     <Card>
       <CardHeader>
-        <CardTitle> Welcome Back! </CardTitle>
+        <CardTitle>Welcome back!</CardTitle>
         <CardDescription>Sign in to your account to continue.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
@@ -90,7 +83,7 @@ const SignInForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>password</FormLabel>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input
                       type="password"
@@ -102,7 +95,7 @@ const SignInForm = () => {
                 </FormItem>
               )}
             />
-            <Button typeof="submit" className="self-start">
+            <Button typeof="submit" className="self-end mt-2">
               Login
             </Button>
           </form>
@@ -111,5 +104,5 @@ const SignInForm = () => {
     </Card>
   );
 };
-// 3950
+
 export default SignInForm;

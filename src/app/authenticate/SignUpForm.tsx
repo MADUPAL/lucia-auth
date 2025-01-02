@@ -6,25 +6,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import React from "react";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import React from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-
-import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signUp } from "./auth.action";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const signUpSchema = z
   .object({
@@ -37,9 +35,9 @@ export const signUpSchema = z
     message: "Passwords dont match",
     path: ["confirmPassword"],
   });
+
 const SignUpForm = () => {
   const router = useRouter();
-  // 1. Define your form.
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -50,14 +48,10 @@ const SignUpForm = () => {
     },
   });
 
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof signUpSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-
     const res = await signUp(values);
     if (res.success) {
-      toast.success("Account Created Successfully");
+      toast.success("Account created successfully");
       router.push("/dashboard");
     } else {
       toast.error(res.error);
@@ -140,7 +134,7 @@ const SignUpForm = () => {
                 </FormItem>
               )}
             />
-            <Button typeof="submit" className="self-start">
+            <Button typeof="submit" className="self-end mt-2">
               Sign Up
             </Button>
           </form>
