@@ -1,3 +1,6 @@
+// create session cookies
+// validating user tokens, session cookies
+
 import { Lucia } from "lucia";
 import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
 import { prisma } from "./prisma";
@@ -13,12 +16,3 @@ export const lucia = new Lucia(adapter, {
     },
   },
 });
-
-/*
-  1. user carries with cookie object
-  2. cookie contains session id
-  3. user makes request to nextjs server
-  4. take a cookie from user, look up session id, match session id in the db and find out user id
-  5. see who is authenticated with server
-*/
-const getUser = () => {};
