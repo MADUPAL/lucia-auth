@@ -11,7 +11,7 @@ const DashboardPage = async () => {
   return (
     <>
       <div>you are logged in as {user.email}</div>{" "}
-      <SignOutButton>Sign Outz</SignOutButton>
+      <SignOutButton>Sign Out</SignOutButton>
     </>
   );
 };
