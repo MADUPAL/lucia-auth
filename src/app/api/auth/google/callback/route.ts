@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
   );
   const accessToken = await tokens.accessToken();
   const googleResponse = await fetch(
-    "https://openidconnect.googleapis.com/v1/userinfo",
+    "https://www.googleapis.com/oauth2/v1/userinfo",
     { headers: { Authorization: `Bearer ${accessToken}` } }
   );
 
@@ -66,15 +66,14 @@ export async function GET(req: NextRequest) {
       },
     });
     userId = user.id;
-
-    const session = await lucia.createSession(userId, {});
-    const sessionCookie = await lucia.createSessionCookie(session.id);
-    (await cookies()).set(
-      sessionCookie.name,
-      sessionCookie.value,
-      sessionCookie.attributes
-    );
-
-    return redirect("/dashboard");
   }
+  const session = await lucia.createSession(userId, {});
+  const sessionCookie = await lucia.createSessionCookie(session.id);
+  (await cookies()).set(
+    sessionCookie.name,
+    sessionCookie.value,
+    sessionCookie.attributes
+  );
+
+  return redirect("/dashboard");
 }
